@@ -12,8 +12,8 @@ const getAllCategories=async (req, res) => {
 
         const sariCategories=await CategoryFromModel.find()
                 res.json({
-                    message:"new Category Created",
-                    dodata:sariCategories
+                    
+                    Categories:sariCategories
 
                 })
     
