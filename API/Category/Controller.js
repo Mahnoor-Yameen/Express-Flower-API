@@ -30,8 +30,12 @@ const getAllCategories=async (req, res) => {
 // get
   const getCategoryByID=async (req, res) => {
 
+    const {_id}=req.query
+
     try {
-        res.send('catogory controller kam kr raha!')
+     await connect(process.env.MONGO_URI)
+     const categoryById=await CategoryFromModel.findOne({_id})
+     res.json({categoryById})
         
     } catch (error) {
         req.status(400).json({
@@ -89,9 +93,29 @@ const getAllCategories=async (req, res) => {
   }
 // put
   const UpdateCategory=async (req, res) => {
+    // user se teeno cheezain main se jo bhi de kr krna chahy
+
+    const {_id,CategoryName,CategoryImage}=req.body
+     
+    
+    const filter = { _id };
+    const update = { CategoryName,CategoryImage };
 
     try {
-        res.send('catogory controller kam kr raha!')
+        //db connection
+        await connect(process.env.MONGO_URI)  //connect hoga db idher
+        await CategoryFromModel.findOneAndUpdate(filter, update, {
+            new: true
+          });
+
+        //   sara lany k liye
+        const categoryUpdate= await CategoryFromModel.find()
+
+        res.json({
+            message:"updating hogyi ha successfully",
+            categoryUpdate
+        })
+
         
     } catch (error) {
         req.status(400).json({
@@ -104,10 +128,33 @@ const getAllCategories=async (req, res) => {
 //   delete
   const DeleteCategory=async (req, res) => {
 
+    const {_id}=req.body
+
     try {
-        res.send('catogory controller kam kr raha!')
+     await connect(process.env.MONGO_URI)   //mongo connection
+     //pehly find to karo k wo chez db mai hai bhi ya nahi
+     if (_id){
+            await CategoryFromModel.deleteOne({_id})      //api call hony pe delete hojayegi
+            const categoryById=await CategoryFromModel.find()      //ek variable main baki ki mungwali
+            res.status(200).json({
+                message:"deleted succesfully",
+                categoryById
+            })
+        } else{
+
+            re.json({
+                message:"The id you are trying to delete do not exists"
+            })
+
+
+        }
+
+
+
+    
+  
         
-    } catch (error) {
+    }catch (error) {
         req.status(400).json({
             message:"controller ka catch function chal raha yani error aya hai",
             messagedusra:error.message
